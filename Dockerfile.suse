@@ -1,0 +1,13 @@
+ARG base=
+FROM ${base}
+
+RUN zypper install -y sudo openssl gcc-c++ && \
+    zypper clean && \
+    useradd --create-home --user-group --password $(openssl passwd -1 a) user && \
+    sed -i '/targetpw/d' /etc/sudoers && \
+    echo 'user ALL=(ALL) ALL' >> /etc/sudoers
+
+WORKDIR /home/user
+USER user:user
+COPY --chown=user:user install_mkl.sh .
+ENTRYPOINT ["/bin/bash", "-c"]

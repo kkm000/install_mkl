@@ -1,0 +1,12 @@
+ARG base=
+FROM ${base}
+
+RUN dnf install -y sudo passwd openssl gcc-c++ && \
+    dnf clean all && \
+    useradd --create-home --user-group --password $(openssl passwd -1 a) user && \
+    echo 'user ALL=(ALL) ALL' >> /etc/sudoers
+
+WORKDIR /home/user
+USER user:user
+COPY --chown=user:user install_mkl.sh .
+ENTRYPOINT ["/bin/bash", "-c"]

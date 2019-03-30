@@ -1,0 +1,27 @@
+set DISTRO [lindex $argv 0]
+set timeout 10
+
+proc abort {} {
+  catch { send \x03; close }
+  puts "\nERROR: Expectation failed or timeout.\n"
+  exit 1
+}
+
+trap { abort } SIGINT
+
+expect_after default abort
+
+expect {
+  "system is using ${DISTRO}-style package management" {}
+  -re "system is using .* package management" { abort }
+}
+
+expect "sudo command now?"
+send "y\r"
+
+expect -re "user's password:|password for user:"
+send "a\r"
+
+expect -timeout 300 -re "MKL package .* was successfully installed"
+
+expect eof
