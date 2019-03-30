@@ -53,7 +53,7 @@ clean:
 	docker image prune -f &>/dev/null; true
 
 veryclean: clean
-	docker image rm -f $$(docker image ps --quiet --all --filter=label=$(label)) &>/dev/null || true
+	docker image rm -f $$(docker image ls --quiet --all --filter=label=$(label)) &>/dev/null || true
 
 else
 
